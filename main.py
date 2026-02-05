@@ -15,11 +15,6 @@ class VoiceRequest(BaseModel):
     audioBase64: Optional[str] = None
     audioUrl: Optional[str] = None
 
-class VoiceRequest(BaseModel):
-    language: str
-    audioFormat: str
-    audioBase64: str
-
 from audio_fetcher import download_audio_from_url
 from audio_utils import save_base64_mp3
 
@@ -59,4 +54,5 @@ def detect_voice(
             else "Natural human voice variations detected"
         )
     }
+
 
