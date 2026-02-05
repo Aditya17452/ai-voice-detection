@@ -8,12 +8,14 @@ import os
 app = FastAPI(title="AI Voice Detection API")
 
 from typing import Optional
+from pydantic import BaseModel, Field
 
 class VoiceRequest(BaseModel):
     language: str
     audioFormat: str
-    audioBase64: Optional[str] = None
-    audioUrl: Optional[str] = None
+    audioBase64: Optional[str] = Field(default=None)
+    audioUrl: Optional[str] = Field(default=None)
+
 
 from audio_fetcher import download_audio_from_url
 from audio_utils import save_base64_mp3
@@ -23,6 +25,13 @@ def detect_voice(
     request: VoiceRequest,
     api_key: str = Depends(verify_api_key)
 ):
+    if not request.audioBase64 and not request.audioUrl:
+    raise HTTPException(
+        status_code=400,
+        detail="Either audioBase64 or audioUrl must be provided"
+    )
+
+
     if request.audioFormat.lower() != "mp3":
         raise HTTPException(status_code=400, detail="Only mp3 supported")
 
@@ -54,5 +63,6 @@ def detect_voice(
             else "Natural human voice variations detected"
         )
     }
+
 
 
